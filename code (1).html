@@ -1,0 +1,2108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portfolio Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import for consistency */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        /* --- Global Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff; /* Light sky blue background */
+            color: #1e3a8a; /* Deep blue text */
+            line-height: 1.6;
+            scroll-behavior: smooth; /* Smooth scrolling for anchor links if any */
+        }
+
+        /* Universal rounded corners with a modern touch */
+        * {
+            border-radius: 0.75rem; /* Slightly more pronounced rounded corners */
+        }
+
+        /* --- Header Styling --- */
+        header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #0f308f 100%); /* Dynamic blue gradient */
+            color: #ffffff;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); /* Softer, colored shadow */
+        }
+
+        header h1 {
+            font-size: 2.25rem; /* Larger heading for mobile */
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.125rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        /* --- Main Content Styling --- */
+        main {
+            padding: 1rem 0; /* Adjust padding for mobile */
+        }
+
+        /* --- Search Bar Styling --- */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0f2fe;
+        }
+
+        .search-container input[type="text"] {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: #1e3a8a;
+            padding: 0.3rem 0.5rem;
+            background-color: transparent;
+            margin-right: 0.5rem;
+        }
+
+        .search-container input[type="text"]::placeholder {
+            color: #60a5fa; /* Light blue placeholder */
+            opacity: 0.8;
+        }
+
+        .search-container button {
+            background-color: #3b82f6; /* Primary blue button */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(59, 130, 246, 0.4);
+        }
+
+        .search-container button:hover {
+            background-color: #2563eb; /* Darker blue on hover */
+            transform: translateY(-1px);
+        }
+
+        /* --- Student List Section Styling --- */
+        #student-list-section {
+            background-color: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08), 0 3px 5px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            padding: 1.5rem 1rem; /* Padding for mobile */
+        }
+
+        #student-list-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), 0 5px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        #student-list-section h2 {
+            font-size: 1.75rem; /* Larger heading */
+            font-weight: 700;
+            color: #1d4ed8; /* Deep blue for section title */
+            border-bottom: 2px solid #bfdbfe; /* Lighter blue border */
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Student Card Styling --- */
+        .student-card {
+            background-color: #e0f2fe; /* Light sky blue */
+            border: 1px solid #bae6fd; /* Very light blue border */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Push content to the bottom */
+            min-height: 140px; /* Ensure cards have a minimum height */
+        }
+
+        .student-card:hover {
+            background-color: #bfdbfe; /* Lighter blue on hover */
+            transform: translateY(-5px) scale(1.02); /* Lift and scale */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1d4ed8; /* Deep blue for names */
+            margin-bottom: 0.5rem;
+        }
+
+        .student-card p {
+            font-size: 0.9rem;
+            color: #4b5563; /* Darker gray for details */
+            margin-bottom: 0.3rem;
+        }
+
+        /* --- Loading Animation for Cards --- */
+        .student-card {
+            opacity: 0; /* Initially hidden */
+            animation: fadeInCard 0.5s forwards ease-out;
+        }
+
+        /* Stagger the animation for each card */
+        .student-card:nth-child(1) { animation-delay: 0.1s; }
+        .student-card:nth-child(2) { animation-delay: 0.2s; }
+        .student-card:nth-child(3) { animation-delay: 0.3s; }
+        .student-card:nth-child(4) { animation-delay: 0.4s; }
+        .student-card:nth-child(5) { animation-delay: 0.5s; }
+        .student-card:nth-child(6) { animation-delay: 0.6s; }
+        .student-card:nth-child(7) { animation-delay: 0.7s; }
+        .student-card:nth-child(8) { animation-delay: 0.8s; }
+        .student-card:nth-child(9) { animation-delay: 0.9s; }
+        .student-card:nth-child(10) { animation-delay: 1.0s; }
+        /* Add more if you have more students */
+
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Individual Student Portfolio Section Styling --- */
+        #student-portfolio-section {
+            padding: 1.5rem 1rem; /* Padding for mobile */
+            background-color: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08), 0 3px 5px rgba(0, 0, 0, 0.06);
+        }
+
+        #student-portfolio-section h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            border-bottom: 2px solid #bfdbfe;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #back-button {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem; /* Smaller padding for mobile */
+            border-radius: 9999px;
+            box-shadow: 0 3px 6px rgba(59, 130, 246, 0.5);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            display: inline-flex; /* Align content properly */
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem; /* Increased margin bottom */
+        }
+
+        #back-button:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(59, 130, 246, 0.7);
+        }
+
+        .detail-block {
+            background-color: #e0f2fe; /* Light sky blue */
+            border: 1px solid #bae6fd;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            padding: 1.2rem 1rem; /* Padding for mobile */
+        }
+
+        .detail-block h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0c4a6e; /* Darker blue */
+            border-bottom: 2px solid #bfdbfe;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-block p {
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .detail-block p strong {
+            color: #1d4ed8; /* Deep blue for labels */
+            display: block; /* Make label a block element for better spacing */
+            margin-bottom: 0.2rem;
+        }
+
+        /* --- Footer Styling --- */
+        footer {
+            background-color: #1e3a8a; /* Dark blue footer */
+            color: #e0f2fe; /* Light blue text */
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Responsive Grid Adjustments --- */
+        #student-grid {
+            grid-template-columns: repeat(1, minmax(0, 1fr)); /* Single column for small screens */
+        }
+
+        @media (min-width: 500px) { /* Adjust breakpoint for slightly wider mobile screens */
+            #student-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)); /* Two columns */
+            }
+        }
+
+        @media (min-width: 768px) { /* Tablet and up */
+            #student-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr)); /* Three columns */
+            }
+            header h1 {
+                font-size: 2.75rem; /* Larger header on larger screens */
+            }
+            main {
+                padding: 1.5rem 0; /* More padding */
+            }
+            .search-container {
+                padding: 0.8rem 1.5rem;
+            }
+            #student-list-section, #student-portfolio-section {
+                padding: 2rem 1.5rem;
+            }
+            .detail-block {
+                padding: 1.5rem 1.2rem;
+            }
+            #back-button {
+                padding: 0.75rem 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) { /* Desktop */
+            #student-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr)); /* Four columns */
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <header>
+        <div class="container mx-auto text-center">
+            <h1 class="text-4xl font-bold">Student Portfolio Portal</h1>
+            <p class="text-lg mt-2">Access detailed profiles of all students</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 flex-grow">
+        <!-- Search Bar -->
+        <div class="search-container rounded-lg">
+            <input type="text" id="student-search" placeholder="Search students by name...">
+            <button id="search-button">Search</button>
+        </div>
+
+        <!-- Student List Section -->
+        <section id="student-list-section">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-gray-300 pb-2">
+                Student Directory
+            </h2>
+            <div id="student-grid" class="grid gap-4">
+                <!-- Student cards will be injected here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Individual Student Portfolio Section (initially hidden) -->
+        <section id="student-portfolio-section" class="hidden p-6 bg-white rounded-lg shadow-lg max-w-4xl mx-auto my-8">
+            <button
+                id="back-button"
+                class="mb-6"
+            >
+                &larr; Back to Student List
+            </button>
+            <h2 id="portfolio-name" class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-blue-400 pb-2"></h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <!-- Personal Details -->
+                <div class="detail-block p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-4 border-b-2 pb-2">Personal Details</h3>
+                    <p><strong>Scholar No:</strong> <span id="personal-scholar-no"></span></p>
+                    <p><strong>Enrollment No:</strong> <span id="personal-enrollment-no"></span></p>
+                    <p><strong>Date of Birth:</strong> <span id="personal-dob"></span></p>
+                    <p><strong>Caste Name:</strong> <span id="personal-caste-name"></span></p>
+                    <p><strong>Caste Category:</strong> <span id="personal-caste-category"></span></p>
+                    <p><strong>Mobile No:</strong> <span id="personal-mobile-no"></span></p>
+                    <p><strong>Samagra ID:</strong> <span id="personal-samagra-id"></span></p>
+                    <p><strong>Aadhar No:</strong> <span id="personal-aadhar-no"></span></p>
+                    <p><strong>Address:</strong> <span id="personal-address"></span></p>
+                    <p><strong>Weight:</strong> <span id="personal-weight"></span></p>
+                    <p><strong>Height:</strong> <span id="personal-height"></span></p>
+                    <p><strong>Blood Group:</strong> <span id="personal-blood-group"></span></p>
+                    <p><strong>Distance from School:</strong> <span id="personal-distance-from-school"></span></p>
+                </div>
+
+                <!-- Family Details -->
+                <div class="detail-block p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-4 border-b-2 pb-2">Family Details</h3>
+                    <p><strong>Father's Name:</strong> <span id="family-father-name"></span></p>
+                    <p><strong>Mother's Name:</strong> <span id="family-mother-name"></span></p>
+                    <p><strong>Father's Annual Income:</strong> <span id="family-father-annual-income"></span></p>
+                    <p><strong>Number of Siblings:</strong> <span id="family-siblings"></span></p>
+                    <p id="family-father-education-container" class="hidden"><strong>Father's Education:</strong> <span id="family-father-education"></span></p>
+                    <p id="family-mother-education-container" class="hidden"><strong>Mother's Education:</strong> <span id="family-mother-education"></span></p>
+                    <p id="family-father-occupation-container" class="hidden"><strong>Father's Occupation:</strong> <span id="family-father-occupation"></span></p>
+                    <p id="family-mother-occupation-container" class="hidden"><strong>Mother's Occupation:</strong> <span id="family-mother-occupation"></span></p>
+                    <p><strong>Income Tax Payer:</strong> <span id="family-income-tax-payer"></span></p>
+                    <p><strong>BPL Card:</strong> <span id="family-bpl-card"></span></p>
+                </div>
+            </div>
+
+            <!-- Academic & Bank Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="detail-block p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-4 border-b-2 pb-2">Academic Details</h3>
+                    <p><strong>Subject:</strong> <span id="academic-subject"></span></p>
+                    <p><strong>Previous School:</strong> <span id="academic-previous-school"></span></p>
+                </div>
+
+                <div class="detail-block p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold mb-4 border-b-2 pb-2">Bank Details</h3>
+                    <p><strong>Account No:</strong> <span id="bank-account-no"></span></p>
+                    <p><strong>IFSC Code:</strong> <span id="bank-ifsc-code"></span></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-8">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 Student Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data extracted from the PDF, structured for easy access
+        const studentData = [
+            {
+                name: "Namrata Sen",
+                scholarNo: "12437",
+                enrollmentNo: "A22/631005/155",
+                fatherName: "Raju Sen",
+                motherName: "Shakun Sen",
+                dob: "21-05-2008",
+                casteName: "Sen",
+                casteCategory: "OBC",
+                subject: "English, Hindi",
+                mobileNo: "7869306253",
+                samagraId: "170816234",
+                aadharNo: "5867 6973 3291",
+                accountNo: "41918335623",
+                ifscCode: "SBIN0007242",
+                address: "H.no. 462, Bal vihar, Anand Nagar Bhopal",
+                previousSchool: "Govt. Subhash Higher Secondary School for Excellence",
+                weight: "46 kg",
+                height: "5 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "10km",
+                fatherAnnualIncome: "75000",
+                siblings: "1 brother, 1 sister (2 total)",
+                parentEducation: {
+                    mother: "High school",
+                    father: "Higher Secondary"
+                },
+                incomeTaxPayer: "No",
+                bplCard: "Yes",
+                fatherOccupation: "N/A",
+                motherOccupation: "N/A"
+            },
+            {
+                name: "Mahak Ahirwar",
+                scholarNo: "12267",
+                enrollmentNo: "A22/631005/022",
+                fatherName: "Phoolsingh Ahirwar",
+                motherName: "Surekha Ahirwar",
+                dob: "26-11-2008",
+                casteName: "Ahirwar",
+                casteCategory: "SC",
+                subject: "English, Hindi",
+                mobileNo: "9993022651",
+                samagraId: "169544746",
+                aadharNo: "866518804603",
+                accountNo: "35138012546",
+                ifscCode: "SBIN0001986",
+                address: "Indraprastha colony, Ahemadpur Road,Vidisha (M.P.)",
+                previousSchool: "Govt. Subhash Higher Secondary School for Excellence",
+                weight: "42kg",
+                height: "4.9 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "70km",
+                fatherAnnualIncome: "60000",
+                siblings: "3",
+                parentEducation: {
+                    father: "ग्रेजुएट"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A",
+                fatherOccupation: "नौकरी",
+                motherOccupation: "गृदहणी"
+            },
+            {
+                name: "Neetesh Kushwah",
+                scholarNo: "13717",
+                enrollmentNo: "A22/632577/027",
+                fatherName: "Rakesh Kushwah",
+                motherName: "Sapeeta kushwah",
+                dob: "28-11-2008",
+                casteName: "Kushwah",
+                casteCategory: "OBC",
+                subject: "English, Hindi",
+                mobileNo: "6266003948",
+                samagraId: "195053320",
+                aadharNo: "2161 8718 0940",
+                accountNo: "55008100021802",
+                ifscCode: "BARB0ASHOKA",
+                address: "M-61 kailash nagar semra kalan , Bhopal",
+                previousSchool: "BASE POINT H S SCHOOL",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A",
+                fatherOccupation: "N/A",
+                motherOccupation: "N/A"
+            },
+            {
+                name: "PALAK GUPTA",
+                scholarNo: "13790",
+                enrollmentNo: "A22/632507/042",
+                fatherName: "RAJESH GUPTA",
+                motherName: "SEEMA GUPTA",
+                dob: "23-01-2010",
+                casteName: "GUPTA",
+                casteCategory: "GENERAL",
+                subject: "English, Hindi",
+                mobileNo: "7722809152",
+                samagraId: "174134634",
+                aadharNo: "677956647749",
+                accountNo: "027310140426",
+                ifscCode: "IPOS0000001",
+                address: "A-924 , new ashoka garden, Bhopal",
+                previousSchool: "Daffodils hr. Sec. School",
+                weight: "43 kg",
+                height: "5.0 feet",
+                bloodGroup: "AB+",
+                distanceFromSchool: "5 km",
+                fatherAnnualIncome: "100000",
+                siblings: "2",
+                parentEducation: {
+                    father: "Higher secondary"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "DIKSHA JAT",
+                scholarNo: "13754",
+                enrollmentNo: "A22/632047/126",
+                fatherName: "Mr KASHIRAM JAT",
+                motherName: "Mrs SAVITRI JAT",
+                dob: "01-06-2007",
+                casteName: "JAT",
+                casteCategory: "OBC",
+                subject: "Hindi English",
+                mobileNo: "8305489575",
+                samagraId: "124481126",
+                aadharNo: "890165084884",
+                accountNo: "900310110019451",
+                ifscCode: "BkID0009003",
+                address: "Green Park colony DIG bunglow bhopal..",
+                previousSchool: "Elite higher secondary school",
+                weight: "47 kg",
+                height: "154cm",
+                bloodGroup: "__",
+                distanceFromSchool: "9.4 किलोमीटर",
+                fatherAnnualIncome: "45,000",
+                siblings: "एक बहन एक भाई",
+                parentEducation: {
+                    mother: "5th pass",
+                    father: "10th pass"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "RAJEEV JAT",
+                scholarNo: "13770",
+                enrollmentNo: "A22/632047/134",
+                fatherName: "Mr KASHIRAM JAT",
+                motherName: "Mrs SAVITRI JAT",
+                dob: "04-07-2008",
+                casteName: "JAT",
+                casteCategory: "OBC",
+                subject: "Hindi English",
+                mobileNo: "8305489575",
+                samagraId: "179683717",
+                aadharNo: "361508850480",
+                accountNo: "900310110019450",
+                ifscCode: "BkID0009003",
+                address: "Green Park colony DIG bunglow bhopal..",
+                previousSchool: "Elite higher secondary school",
+                weight: "55kg",
+                height: "182cm",
+                bloodGroup: "B+",
+                distanceFromSchool: "9.4 किलोमीटर",
+                fatherAnnualIncome: "45,000",
+                siblings: "दो बहने",
+                parentEducation: {
+                    mother: "5th pass",
+                    father: "10th pass"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Divyansh sen",
+                scholarNo: "13696",
+                enrollmentNo: "A22/632488/017",
+                fatherName: "Lt.Narendra sen",
+                motherName: "Preeti devi sen",
+                dob: "05-01-2009",
+                casteName: "OBC",
+                casteCategory: "OBC",
+                subject: "English,Hindi",
+                mobileNo: "9752870682",
+                samagraId: "302109457",
+                aadharNo: "7872-5048-3837",
+                accountNo: "905310110009746",
+                ifscCode: "BKID0009053",
+                address: "H.No.359 Bal Vihar Front Of Meena Samaj Durga Mandir Anand Nagar Bhopal 462022",
+                previousSchool: "Central public hr. Sec. School",
+                weight: "50kg",
+                height: "5.6 feet",
+                bloodGroup: "AB+",
+                distanceFromSchool: "8 km",
+                fatherAnnualIncome: "120,000",
+                siblings: "2",
+                parentEducation: {
+                    father: "graduate"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Anushka Rathore",
+                scholarNo: "13690",
+                enrollmentNo: "A22/632047/074",
+                fatherName: "Vishnu Rathore",
+                motherName: "Sarita Rathore",
+                dob: "13-12-2007",
+                casteName: "Rathore",
+                casteCategory: "OBC",
+                subject: "English, Hindi",
+                mobileNo: "7771884854 , 9981597737",
+                samagraId: "196847989",
+                aadharNo: "8799 2012 9502",
+                accountNo: "35327728430",
+                ifscCode: "SBIN0001964",
+                address: "h.no 474 jp nagar chola road , Bhopal",
+                previousSchool: "Elite Hr Sec SCHOOL",
+                weight: "50kg",
+                height: "5.2 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "10 km",
+                fatherAnnualIncome: "60000",
+                siblings: "1",
+                parentEducation: {
+                    father: "Higher secondary"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "Nandini Singroli",
+                scholarNo: "13716",
+                enrollmentNo: "A22/632583/002",
+                fatherName: "Mahesh Kumar singroli",
+                motherName: "Sarita Singroli",
+                dob: "10-08-2008",
+                casteName: "Kurmi",
+                casteCategory: "OBC",
+                subject: "English, Hindi",
+                mobileNo: "7974277919",
+                samagraId: "307115840",
+                aadharNo: "9022 5011 1285",
+                accountNo: "01362171002122",
+                ifscCode: "PUNB0013610",
+                address: "H no. 121,Shankar nagar ,Sai Ram colonysemra kalan , Bhopal",
+                previousSchool: "Modern Montessory High school",
+                weight: "43 kg",
+                height: "5.2 feet",
+                bloodGroup: "AB+",
+                distanceFromSchool: "8km",
+                fatherAnnualIncome: "1,00,000",
+                siblings: "1",
+                parentEducation: {
+                    mother: "graduation",
+                    father: "graduation"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "ANURAG GUPTA",
+                scholarNo: "12304",
+                enrollmentNo: "A22/631005/186",
+                fatherName: "SATYA PRAKASH GUPTA",
+                motherName: "NEETU GUPTA",
+                dob: "06/11/2008",
+                casteName: "GUPTA",
+                casteCategory: "GENERAL",
+                subject: "HINDI , ENGLISH",
+                mobileNo: "9506783586",
+                samagraId: "310800595",
+                aadharNo: "2367 6131 8693",
+                accountNo: "41061387559",
+                ifscCode: "SBIN0016842",
+                address: "B3/503 UNI HOMES COLONY , BAIRAGARH CHICHLI, KOLAR ROAD , BHOPAL",
+                previousSchool: "SUBHASH SCHOOL FOR EXCELLENCE",
+                weight: "50 kg",
+                height: "5 फीट 5 इंच",
+                bloodGroup: "B+",
+                distanceFromSchool: "9 km",
+                fatherAnnualIncome: "60000",
+                siblings: "1 बहन",
+                parentEducation: {
+                    mother: "M.A pass",
+                    father: "B.Ed complete"
+                },
+                incomeTaxPayer: "नहीीं है",
+                bplCard: "नहीीं है"
+            },
+            {
+                name: "SHARAD SHUKLA",
+                scholarNo: "13782",
+                enrollmentNo: "A22/322471/030",
+                fatherName: "PRABHAT SHUKLA",
+                motherName: "SAVITA SHUKLA",
+                dob: "09/01/2008",
+                casteName: "SHUKLA",
+                casteCategory: "GENERAL",
+                subject: "ENGLISH, HINDI",
+                mobileNo: "9179565049",
+                samagraId: "177864196",
+                aadharNo: "6222-8455-6144",
+                accountNo: "02310139273",
+                ifscCode: "N/A",
+                address: "36 B SHREE KRISHNA SOCIETY CHUNABHATTI KOLAR ROAD",
+                previousSchool: "J N PUBLIC HIGH SCHOOL MAUGANJ REWA MP",
+                weight: "N/A",
+                height: "175cm",
+                bloodGroup: "AB+",
+                distanceFromSchool: "5 किलोमीटर",
+                fatherAnnualIncome: "1,30,000",
+                siblings: "एक बहन",
+                parentEducation: {
+                    father: "स्नातकोत्तर"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "SHIVANSHU DWIVEDI",
+                scholarNo: "13731",
+                enrollmentNo: "A22/632088/056",
+                fatherName: "RAJESH DWIVEDI",
+                motherName: "NEELAM DWIVEDI",
+                dob: "01/10/2008",
+                casteName: "DWIVEDI",
+                casteCategory: "GENERAL",
+                subject: "HINDI , ENGLISH",
+                mobileNo: "8878838838",
+                samagraId: "158656362",
+                aadharNo: "362359959571",
+                accountNo: "18600100031565",
+                ifscCode: "BARB0HABIB6",
+                address: "E-2/25 ARERA COLONY BHOPAL (M.P)",
+                previousSchool: "NALANDA PUBLIC HIGH SCHOOL",
+                weight: "58 kg",
+                height: "6.1 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "1km",
+                fatherAnnualIncome: "56000/-",
+                siblings: "3 Sister",
+                parentEducation: {
+                    father: "graduate"
+                },
+                incomeTaxPayer: "No",
+                bplCard: '"No"'
+            },
+            {
+                name: "ANURAG NAMDEV",
+                scholarNo: "13748",
+                enrollmentNo: "A22/632435/007",
+                fatherName: "UMESH NAMDEV",
+                motherName: "GAYATRI NAMDEV",
+                dob: "07/06/2007",
+                casteName: "NAMDEV",
+                casteCategory: "OBC",
+                subject: "HINDI, ENGLISH",
+                mobileNo: "8435519297",
+                samagraId: "17988064",
+                aadharNo: "5618 2779 1877",
+                accountNo: "888218210017879",
+                ifscCode: "BKID0008882",
+                address: "B-3/203,E.W.S PMAY BHANPUR, BHANPUR BRIDGE, HUZUR , PEOPLES CAMPUS, BHOPAL",
+                previousSchool: "SHREE NAV NIKETAN HIGHER SECONDARY SCHOOL",
+                weight: "46kg",
+                height: "155cm",
+                bloodGroup: "B+",
+                distanceFromSchool: "13km",
+                fatherAnnualIncome: "60000",
+                siblings: "एक भाई",
+                parentEducation: {
+                    mother: "पाींचवी पास",
+                    father: "आठवी पास"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Kunal Verma",
+                scholarNo: "12327",
+                enrollmentNo: "A22/631005/203",
+                fatherName: "Laxmi Narayan Verma",
+                motherName: "Kamlesh Verma",
+                dob: "22-04-2007",
+                casteName: "lodha",
+                casteCategory: "OBC",
+                subject: "English,Hindi",
+                mobileNo: "7879794606",
+                samagraId: "171793523",
+                aadharNo: "4864 4651 3422",
+                accountNo: "67374465690",
+                ifscCode: "SBIN0030135",
+                address: "Block no. C-13, house no.16 shyam nagar bhopal",
+                previousSchool: "Govt. Subhash Excellence Higher Secondary School",
+                weight: "37 kg",
+                height: "5.3 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "2.5 km",
+                fatherAnnualIncome: "58,000",
+                siblings: "2 sister",
+                parentEducation: {
+                    mother: "higher secondary",
+                    father: "graduation"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "Anandi Shrivastava",
+                scholarNo: "13745",
+                enrollmentNo: "A22/632419/001",
+                fatherName: "Nipun Shrivastava",
+                motherName: "Archana Shrivastava",
+                dob: "19-08-2008",
+                casteName: "Shrivastava",
+                casteCategory: "General",
+                subject: "English , Hindi",
+                mobileNo: "6232036717",
+                samagraId: "319445141",
+                aadharNo: "579399187325",
+                accountNo: "37530061087",
+                ifscCode: "SBIN0004197",
+                address: "T-11 Shikhar akash complex,kailash nagar,Bairagarh huzur",
+                previousSchool: "subash government higher secondary school",
+                weight: "49kg",
+                height: "5 feet",
+                bloodGroup: "A+",
+                distanceFromSchool: "8km",
+                fatherAnnualIncome: "1,50,000",
+                siblings: "1 भाई 1 बहन (2 total)",
+                parentEducation: {
+                    mother: "10th pass",
+                    father: "graduated"
+                },
+                incomeTaxPayer: "nahi hai",
+                bplCard: "nahi hai"
+            },
+            {
+                name: "HARSHITA GOSWAMI",
+                scholarNo: "13701",
+                enrollmentNo: "A22/632010/071",
+                fatherName: "Bhupendra Giri Goswami",
+                motherName: "Sita Goswami",
+                dob: "22-09-2007",
+                casteName: "Goswami",
+                casteCategory: "OBC",
+                subject: "Hindi,English",
+                mobileNo: "8305383140",
+                samagraId: "124037310",
+                aadharNo: "9346-6340-9127",
+                accountNo: "36103631728",
+                ifscCode: "SBIN0030529",
+                address: "EWS-I 265,New Subhash Nagar,Bhopal",
+                previousSchool: "Govt. Subhash Higher Secondary School for Excellence",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "Harshit vagadre",
+                scholarNo: "12375",
+                enrollmentNo: "A22/631005/101",
+                fatherName: "Vaman rao vagadre",
+                motherName: "babli vagadre",
+                dob: "20-2-2008",
+                casteName: "kunbi",
+                casteCategory: "OBC",
+                subject: "English,Hindi",
+                mobileNo: "9589914801",
+                samagraId: "172238941",
+                aadharNo: "3872 6925 1095",
+                accountNo: "55008100016750",
+                ifscCode: "BARB0ASHOKA",
+                address: "13-A sai ram colony samra gate bhopal",
+                previousSchool: "Govt. Subhash Excellence Higher Secondary School",
+                weight: "65.5kg",
+                height: "165cm",
+                bloodGroup: "A+",
+                distanceFromSchool: "6 km",
+                fatherAnnualIncome: "36,000",
+                siblings: "1 भाई",
+                parentEducation: {
+                    father: "10 class"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "YASHIKA DANGI",
+                scholarNo: "12292",
+                enrollmentNo: "A22/631005/044",
+                fatherName: "ACHAL SINGH DANGI",
+                motherName: "RACHNA DANGI",
+                dob: "11/08/2008",
+                casteName: "Dangi",
+                casteCategory: "OBC",
+                subject: "Hindi , English",
+                mobileNo: "9630857483",
+                samagraId: "111866862",
+                aadharNo: "867896768051",
+                accountNo: "25928100025833",
+                ifscCode: "BARB0ISLBHO",
+                address: "Barkheda baramad Berasia Bhopal",
+                previousSchool: "Govt subhash excellence school",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "ANSHUL BARMAN",
+                scholarNo: "13747",
+                enrollmentNo: "A22/632337/077",
+                fatherName: "Mr. CHANDRAHAS BARMAN",
+                motherName: "Mrs.ANJU BARMAN",
+                dob: "06-05-2008",
+                casteName: "Dhimar",
+                casteCategory: "OBC",
+                subject: "English , Hindi",
+                mobileNo: "6261230971",
+                samagraId: "192803679",
+                aadharNo: "845624834801",
+                accountNo: "50225629544",
+                ifscCode: "IDIB000M654",
+                address: "H no-77 B SECTOR, SARVDHARAM COLONY, KOLAR ROAD, BHOPAL",
+                previousSchool: "Govt. Subhash Excellence Hr. sec. school",
+                weight: "52 kg",
+                height: "5.8 feet",
+                bloodGroup: "A+",
+                distanceFromSchool: "5km",
+                fatherAnnualIncome: "60000/-",
+                siblings: "2",
+                parentEducation: {
+                    father: "graduate"
+                },
+                incomeTaxPayer: "है",
+                bplCard: "है"
+            },
+            {
+                name: "Gourav patel",
+                scholarNo: "13755",
+                enrollmentNo: "A22/632585/036",
+                fatherName: "Mastram patel",
+                motherName: "neetu patel",
+                dob: "27-05-2008",
+                casteName: "Gurjar",
+                casteCategory: "OBC",
+                subject: "N/A",
+                mobileNo: "8817877120",
+                samagraId: "105883959",
+                aadharNo: "899299862585",
+                accountNo: "5243349451",
+                ifscCode: "CBIN0284742",
+                address: "H/n 14 bank colony jahangirabad bhopal",
+                previousSchool: "Govt. Subhash Excellence Higher Secondary School",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "SHIVANSH JAIN",
+                scholarNo: "12460",
+                enrollmentNo: "A22/631005/254",
+                fatherName: "SANTOSH JAIN",
+                motherName: "RENU JAIN",
+                dob: "09/04/2008",
+                casteName: "JAIN",
+                casteCategory: "GENERAL",
+                subject: "ENGLISH HINDI",
+                mobileNo: "9926769338",
+                samagraId: "153017290",
+                aadharNo: "404424862377",
+                accountNo: "31750100017676",
+                ifscCode: "BARB0KOLARR",
+                address: "AN-55 LALITA NAGAR, RAJHARSH COLONY, KOLOR ROAD",
+                previousSchool: "Govt Subhash higher secondary school for excellence",
+                weight: "46 kg",
+                height: "5.6 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "8km",
+                fatherAnnualIncome: "49000/-",
+                siblings: "1 sister and me",
+                parentEducation: {
+                    father: "Graduated"
+                },
+                incomeTaxPayer: "nahi hai",
+                bplCard: "nahi hai",
+                fatherOccupation: "प्राइवेट नौकरी",
+                motherOccupation: "गृदहणी"
+            },
+            {
+                name: "Anshul Mishra",
+                scholarNo: "13476",
+                enrollmentNo: "A22/632306/016",
+                fatherName: "Lalit Mishra",
+                motherName: "Ritu Mishra",
+                dob: "13.11.2008",
+                casteName: "Mishra",
+                casteCategory: "General",
+                subject: "Hindi, English",
+                mobileNo: "9752541936",
+                samagraId: "196778502",
+                aadharNo: "5187 4967 3723",
+                address: "H.N 62 , Gupta Colony, Anand Nagar, Bhopal",
+                previousSchool: "K.K.C Public Higher Secondary School",
+                weight: "57kg",
+                height: "5.10ft",
+                bloodGroup: "B+",
+                distanceFromSchool: "9.7km",
+                fatherAnnualIncome: "2,00,000",
+                siblings: "2 भाई",
+                parentEducation: {
+                    father: "ग्रेजुएट"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "नहीीं है"
+            },
+            {
+                name: "Ansh Rajput",
+                scholarNo: "12417",
+                enrollmentNo: "A22/631005/139",
+                fatherName: "Gopal Singh Rajput",
+                motherName: "Kanti Rajput",
+                dob: "14-12-2007",
+                casteName: "Rajput",
+                casteCategory: "General",
+                subject: "English , Hindi",
+                mobileNo: "8770637841",
+                samagraId: "141444989",
+                aadharNo: "6984 4278 8640",
+                accountNo: "40993272498",
+                ifscCode: "SBIN0005798",
+                address: "17/1 Akabarpur, Near Lok Seva Kendra Kolar, Kolar Road, Bhopal.",
+                previousSchool: "Govt. Subhash Excellence Hr. Secondary School, Bhopal",
+                weight: "70 kg",
+                height: "5.7feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "8km",
+                fatherAnnualIncome: "3,50,000/-",
+                siblings: "1Brother",
+                parentEducation: {
+                    father: "Post Graduate"
+                },
+                incomeTaxPayer: "No",
+                bplCard: "No"
+            },
+            {
+                name: "Manya patel",
+                scholarNo: "13712",
+                enrollmentNo: "A22/631008/059",
+                fatherName: "Ajay patel",
+                motherName: "poonam patel",
+                dob: "24/05/2007",
+                casteName: "Gurjar",
+                casteCategory: "OBC",
+                subject: "English, Hindi",
+                mobileNo: "7024740743",
+                samagraId: "125021999",
+                aadharNo: "723676384885",
+                accountNo: "7261206209",
+                ifscCode: "IDIB000K735",
+                address: "House no.5 namoh sai campus, gehunkheda,kolar road, bhopal",
+                previousSchool: "Govt. Subhash Excellence Hr secondary school,bhopal",
+                weight: "52 kg",
+                height: "5.2 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "8 km",
+                fatherAnnualIncome: "50000/-",
+                siblings: "1",
+                parentEducation: {
+                    father: "graduate"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Nancy dhakad",
+                scholarNo: "12435",
+                enrollmentNo: "A22/631005/250",
+                fatherName: "Manoj Dhakad",
+                motherName: "Jyoti Dhakad",
+                dob: "13-07-2008",
+                casteName: "kirar",
+                casteCategory: "OBC",
+                subject: "English , Hindi",
+                mobileNo: "9893614916",
+                samagraId: "170594208",
+                aadharNo: "6159 0681 9282",
+                accountNo: "50278724355",
+                ifscCode: "IDIB000G544",
+                address: "430 rachna nagar near chetak bhopal",
+                previousSchool: "govt. Subhash excellence",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "Siddhi Tiwari",
+                scholarNo: "12283",
+                enrollmentNo: "A22/631005/035",
+                fatherName: "Manish Tiwari",
+                motherName: "Nisha Tiwari",
+                dob: "29-05-2008",
+                casteName: "Tiwari",
+                casteCategory: "General",
+                subject: "Hindi , English",
+                mobileNo: "7828815120",
+                samagraId: "178913176",
+                aadharNo: "210142423803",
+                accountNo: "04960100032970",
+                ifscCode: "BARB0ISLBO",
+                address: "H.No. 2295 kailash nagar semra bhopal Madhya Pradesh.",
+                previousSchool: "Subhash Excellence school",
+                weight: "38 kg",
+                height: "5'2''",
+                bloodGroup: "B+",
+                distanceFromSchool: "7km",
+                fatherAnnualIncome: "36000",
+                siblings: "एक भाई",
+                parentEducation: {
+                    mother: "आठवी पास",
+                    father: "आठवी पास"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है",
+                fatherOccupation: "नौकरी",
+                motherOccupation: "गृदहणी"
+            },
+            {
+                name: "Shreya Tripathi",
+                scholarNo: "13732",
+                enrollmentNo: "A22/632671/015",
+                fatherName: "Devkant Tripathi",
+                motherName: "Mamta Tripathi",
+                dob: "19-04-2008",
+                casteName: "Brahman",
+                casteCategory: "General",
+                subject: "English , Hindi",
+                mobileNo: "6260765884",
+                samagraId: "191489557",
+                aadharNo: "4202 3213 5800",
+                accountNo: "77042310001440",
+                ifscCode: "SYNB0007704",
+                address: "2/15,Old Subhash Nagar, Bhopal",
+                previousSchool: "St.Thomas convent High school, Arera hills , Bhopal",
+                weight: "45 kg",
+                height: "5.4 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "4.5 km",
+                fatherAnnualIncome: "40000",
+                siblings: "2",
+                parentEducation: {
+                    father: "graduate"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "HEMANT PAL",
+                scholarNo: "13702",
+                enrollmentNo: "A22/632690/012",
+                fatherName: "MANGAL SINGH",
+                motherName: "SANGEETA PAL",
+                dob: "09.09.2007",
+                casteName: "GADARIYA",
+                casteCategory: "OBC",
+                subject: "English , Hindi",
+                mobileNo: "7987689419",
+                samagraId: "130866458",
+                aadharNo: "878799751986",
+                accountNo: "307100013159",
+                ifscCode: "BARB0BHELXX",
+                address: "SHIV MANDIR KAPDA MILL COLONY CHANDBAD",
+                previousSchool: "MODEL PUBLIC HIGH SCHOOL, HINOTIYA BHOPAL",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "priya dahiya",
+                scholarNo: "13722",
+                enrollmentNo: "A22/632175/007",
+                fatherName: "sunil Dahiya",
+                motherName: "sita dahiya",
+                dob: "14-01-2007",
+                casteName: "kotwal",
+                casteCategory: "sc",
+                subject: "Hindi , English",
+                mobileNo: "9752314083",
+                samagraId: "191740297",
+                aadharNo: "628928552967",
+                accountNo: "41125119839",
+                ifscCode: "SBIN0030404",
+                address: "h no. 52 E-6 meera nagar bhopal Madhya Pradesh.",
+                previousSchool: "Rose convent hr. Sec. School",
+                weight: "40 kg",
+                height: "143 cm",
+                bloodGroup: "B+",
+                distanceFromSchool: "5 km",
+                fatherAnnualIncome: "100000",
+                siblings: "2 भाई",
+                parentEducation: {
+                    mother: "7 पास",
+                    father: "10 पास"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Rudraditya Singh Chouhan",
+                scholarNo: "13776",
+                enrollmentNo: "A22/632047/043",
+                fatherName: "Ramesh Singh Chouhan",
+                motherName: "Rachana Singh Chouhan",
+                dob: "15-11-2009",
+                casteName: "Chouhan",
+                casteCategory: "General",
+                subject: "English , Hindi , Mathematics, Physics, Chemistry",
+                mobileNo: "9131091299",
+                samagraId: "302872715",
+                aadharNo: "9828 2943 1258",
+                accountNo: "40265092639",
+                ifscCode: "SBIN0061102",
+                address: "77, New Gali No.1, Coach Factory Road, Dwarka Nagar, Huzur, Bhopal, Madhya Pradesh - 462010",
+                previousSchool: "Elite Higher Secondary School",
+                weight: "N/A",
+                height: "N/A",
+                bloodGroup: "N/A",
+                distanceFromSchool: "N/A",
+                fatherAnnualIncome: "N/A",
+                siblings: "N/A",
+                parentEducation: {
+                    mother: "N/A",
+                    father: "N/A"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "Priyanshi Yadav",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9479789482",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "50kg",
+                height: "5.4 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "7 km",
+                fatherAnnualIncome: "40000",
+                siblings: "2",
+                parentEducation: {
+                    father: "ग्रेजुएट"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "N/A"
+            },
+            {
+                name: "Palak Verma",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "7869859789",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "43kg",
+                height: "5.2 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "14km",
+                fatherAnnualIncome: "85000",
+                siblings: "2",
+                parentEducation: {
+                    mother: "9th pass",
+                    father: "graduation"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "Ritika vishwakarma",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "7509625142",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "50kg",
+                height: "4.9 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "7km",
+                fatherAnnualIncome: "5000",
+                siblings: "1 bhai",
+                parentEducation: {
+                    father: "ग्रेजुएट"
+                },
+                incomeTaxPayer: "नहीीं है",
+                bplCard: "है"
+            },
+            {
+                name: "Sejal chaturvedi",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "6394640266",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "50kg",
+                height: "5.4 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "7km",
+                fatherAnnualIncome: "70000",
+                siblings: "1",
+                parentEducation: {
+                    mother: "graduation",
+                    father: "graduation"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "Divya gour",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "7692825572",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "60 किलोग्राम",
+                height: "160 cm",
+                bloodGroup: "A+",
+                distanceFromSchool: "9km",
+                fatherAnnualIncome: "1,50,000",
+                siblings: "1 बहन 1 भाई (2 total)",
+                parentEducation: {
+                    father: "ग्रेजुएट"
+                },
+                incomeTaxPayer: "नहीीं हैं",
+                bplCard: "नहीीं है"
+            },
+            {
+                name: "Muskan Prasad",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9039811845",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "48 kg",
+                height: "5.7 feet",
+                bloodGroup: "AB+",
+                distanceFromSchool: "6km",
+                fatherAnnualIncome: "70000",
+                siblings: "भाई-1",
+                parentEducation: {
+                    mother: "High school",
+                    father: "Higher Secondary"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "ANIKET HIRVE",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "7723083785",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "73 kg",
+                height: "5.8 feet",
+                bloodGroup: "AB+",
+                distanceFromSchool: "11km",
+                fatherAnnualIncome: "60000/-",
+                siblings: "1 Sister",
+                parentEducation: {
+                    father: "Higher secondary"
+                },
+                incomeTaxPayer: "No",
+                bplCard: "No"
+            },
+            {
+                name: "kavita yadav",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9407226133",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "48 किलोग्राम",
+                height: "153 cm",
+                bloodGroup: "O+",
+                distanceFromSchool: "10km",
+                fatherAnnualIncome: "1,20,000",
+                siblings: "3 बहने , 2 भाई (5 total)",
+                parentEducation: {
+                    father: "higher secondary",
+                    mother: "8th pass"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है (yes)"
+            },
+            {
+                name: "karan sharma",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "8085643499",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "72 kg",
+                height: "5.7 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "20 km",
+                fatherAnnualIncome: "90000/-",
+                siblings: "1-sister,2-brother (including me)",
+                parentEducation: {
+                    mother: "High school",
+                    father: "higher secondary"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है (yes)"
+            },
+            {
+                name: "AMIT VERMA",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9340406698",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "52 kg",
+                height: "5.5 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "3km",
+                fatherAnnualIncome: "36000/-",
+                siblings: "1",
+                parentEducation: {
+                    father: "पोस्ट ग्रेजुएट"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "मान साल्वे",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "8602261958",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "58 kg",
+                height: "5.9 feet",
+                bloodGroup: "A+",
+                distanceFromSchool: "4km",
+                fatherAnnualIncome: "1,30,000",
+                siblings: "2",
+                parentEducation: {
+                    father: "post graduate"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "komal khobragade",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "7879682895",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "40kg",
+                height: "163cm",
+                bloodGroup: "A+",
+                distanceFromSchool: "1km",
+                fatherAnnualIncome: "2,00,000",
+                siblings: "1 भाई",
+                parentEducation: {
+                    father: "12 class"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "नहीीं"
+            },
+            {
+                name: "Shweta chadar",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9893062861",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "40 kg",
+                height: "5.4 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "7km",
+                fatherAnnualIncome: "48000",
+                siblings: "1 भाई 1 बहन",
+                parentEducation: {
+                    father: "ग्रेजुएट"
+                },
+                incomeTaxPayer: "नहीीं है",
+                bplCard: "है"
+            },
+            {
+                name: "Prasan Sharma",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "6263464648",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "54 kg",
+                height: "5'7 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "4.3 km",
+                fatherAnnualIncome: "4,00,000",
+                siblings: "2 बहन",
+                parentEducation: {
+                    mother: "graduated",
+                    father: "graduated"
+                },
+                incomeTaxPayer: "NO",
+                bplCard: "NO"
+            },
+            {
+                name: "Saloni Shrivas",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "8817639379",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "38Kg",
+                height: "5'2 feet",
+                bloodGroup: "B+",
+                distanceFromSchool: "8 km",
+                fatherAnnualIncome: "200000",
+                siblings: "4",
+                parentEducation: {
+                    mother: "हाई स्कूल",
+                    father: "उच्चतर माध्यभमक"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "yes"
+            },
+            {
+                name: "Manisha prajapati",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9425744560",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "41 kg",
+                height: "5 feet",
+                bloodGroup: "o+",
+                distanceFromSchool: "2.5km",
+                fatherAnnualIncome: "36,000",
+                siblings: "1 भाई 1 बहन",
+                parentEducation: {
+                    mother: "ungraduated",
+                    father: "8th pass"
+                },
+                incomeTaxPayer: "हैं",
+                bplCard: "हैं"
+            },
+            {
+                name: "Naina Gusain",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "7828487820",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "45 kg",
+                height: "5.1 feet",
+                bloodGroup: "AB+",
+                distanceFromSchool: "12 km",
+                fatherAnnualIncome: "1,00,000",
+                siblings: "1 भाई",
+                parentEducation: {
+                    mother: "undergraduate",
+                    father: "undergraduate"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "हैं"
+            },
+            {
+                name: "Arnav Sarkar",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9424686486",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "60 kg",
+                height: "5'9\"",
+                bloodGroup: "O+",
+                distanceFromSchool: "5km",
+                fatherAnnualIncome: "7,50,000/-",
+                siblings: "0",
+                parentEducation: {
+                    mother: "Doctorate",
+                    father: "Post Graduate"
+                },
+                incomeTaxPayer: "No",
+                bplCard: "No"
+            },
+            {
+                name: "chhaya vishwakarma",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "8871983353",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "54 kg",
+                height: "5'2\"",
+                bloodGroup: "O+",
+                distanceFromSchool: "10 km",
+                fatherAnnualIncome: "100000",
+                siblings: "3 बहन",
+                parentEducation: {
+                    father: "हाई स्कूल"
+                },
+                incomeTaxPayer: "नहीीं है",
+                bplCard: "है"
+            },
+            {
+                name: "Anshu Bhargav",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9131651159",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "42 kg",
+                height: "4'10''",
+                bloodGroup: "O+",
+                distanceFromSchool: "7.8km",
+                fatherAnnualIncome: "40000",
+                siblings: "तीन बहनें",
+                parentEducation: {
+                    mother: "आठवी पास",
+                    father: "Graduate"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Raj gupta",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "9926812468",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "51 kg",
+                height: "5.3 feet",
+                bloodGroup: "O+",
+                distanceFromSchool: "11km",
+                fatherAnnualIncome: "40000",
+                siblings: "एक बहन और एक भाई",
+                parentEducation: {
+                    mother: "पाींचवीीं पास",
+                    father: "आठवी पास"
+                },
+                incomeTaxPayer: "N/A",
+                bplCard: "है"
+            },
+            {
+                name: "Arpita jat",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "8319981507",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "69 kg",
+                height: "5'4",
+                bloodGroup: "O+",
+                distanceFromSchool: "6 km",
+                fatherAnnualIncome: "75000",
+                siblings: "1",
+                parentEducation: {
+                    mother: "12th pass",
+                    father: "12 th pass"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            },
+            {
+                name: "Himanshu Shukla",
+                scholarNo: "N/A",
+                enrollmentNo: "N/A",
+                fatherName: "N/A",
+                motherName: "N/A",
+                dob: "N/A",
+                casteName: "N/A",
+                casteCategory: "N/A",
+                subject: "N/A",
+                mobileNo: "N/A",
+                samagraId: "N/A",
+                aadharNo: "N/A",
+                accountNo: "N/A",
+                ifscCode: "N/A",
+                address: "N/A",
+                previousSchool: "N/A",
+                weight: "58kg",
+                height: "5'8",
+                bloodGroup: "N/A",
+                distanceFromSchool: "7 km",
+                fatherAnnualIncome: "36000",
+                siblings: "2",
+                parentEducation: {
+                    mother: "graduate",
+                    father: "graduate"
+                },
+                incomeTaxPayer: "नहीीं",
+                bplCard: "है"
+            }
+        ];
+
+        // DOM Elements
+        const studentListSection = document.getElementById('student-list-section');
+        const studentPortfolioSection = document.getElementById('student-portfolio-section');
+        const studentGrid = document.getElementById('student-grid');
+        const backButton = document.getElementById('back-button');
+        const studentSearchInput = document.getElementById('student-search');
+        const searchButton = document.getElementById('search-button');
+
+        // State for current student list to be displayed
+        let currentStudentList = [...studentData];
+
+        // Function to render student cards
+        function renderStudentCards(studentsToRender) {
+            studentGrid.innerHTML = ''; // Clear existing cards
+            studentsToRender.forEach((student, index) => {
+                const studentCard = document.createElement('div');
+                studentCard.classList.add(
+                    'student-card',
+                    'p-4',
+                    'cursor-pointer',
+                    'transition',
+                    'duration-300',
+                    'ease-in-out',
+                    'transform',
+                    'hover:scale-105'
+                );
+                studentCard.innerHTML = `
+                    <h3 class="text-xl font-semibold mb-2">${student.name}</h3>
+                    <p class="text-sm text-gray-600">Scholar No: ${student.scholarNo || 'N/A'}</p>
+                    <p class="text-sm text-gray-600">Mobile: ${student.mobileNo || 'N/A'}</p>
+                `;
+                studentCard.addEventListener('click', () => displayStudentPortfolio(student));
+                studentGrid.appendChild(studentCard);
+            });
+        }
+
+        // Function to display the student list
+        function displayStudentList() {
+            studentListSection.classList.remove('hidden');
+            studentPortfolioSection.classList.add('hidden');
+            // Render the currently filtered list
+            renderStudentCards(currentStudentList);
+        }
+
+        // Function to display an individual student's portfolio
+        function displayStudentPortfolio(student) {
+            studentListSection.classList.add('hidden');
+            studentPortfolioSection.classList.remove('hidden');
+
+            document.getElementById('portfolio-name').textContent = `${student.name}'s Portfolio`;
+
+            // Populate Personal Details
+            document.getElementById('personal-scholar-no').textContent = student.scholarNo || 'N/A';
+            document.getElementById('personal-enrollment-no').textContent = student.enrollmentNo || 'N/A';
+            document.getElementById('personal-dob').textContent = student.dob || 'N/A';
+            document.getElementById('personal-caste-name').textContent = student.casteName || 'N/A';
+            document.getElementById('personal-caste-category').textContent = student.casteCategory || 'N/A';
+            document.getElementById('personal-mobile-no').textContent = student.mobileNo || 'N/A';
+            document.getElementById('personal-samagra-id').textContent = student.samagraId || 'N/A';
+            document.getElementById('personal-aadhar-no').textContent = student.aadharNo || 'N/A';
+            document.getElementById('personal-address').textContent = student.address || 'N/A';
+            document.getElementById('personal-weight').textContent = student.weight || 'N/A';
+            document.getElementById('personal-height').textContent = student.height || 'N/A';
+            document.getElementById('personal-blood-group').textContent = student.bloodGroup || 'N/A';
+            document.getElementById('personal-distance-from-school').textContent = student.distanceFromSchool || 'N/A';
+
+            // Populate Family Details
+            document.getElementById('family-father-name').textContent = student.fatherName || 'N/A';
+            document.getElementById('family-mother-name').textContent = student.motherName || 'N/A';
+            document.getElementById('family-father-annual-income').textContent = student.fatherAnnualIncome || 'N/A';
+            document.getElementById('family-siblings').textContent = student.siblings || 'N/A';
+
+            // Handle optional parent education and occupation fields
+            const fatherEducationElem = document.getElementById('family-father-education');
+            const motherEducationElem = document.getElementById('family-mother-education');
+            const fatherOccupationElem = document.getElementById('family-father-occupation');
+            const motherOccupationElem = document.getElementById('family-mother-occupation');
+
+            const fatherEducationContainer = document.getElementById('family-father-education-container');
+            const motherEducationContainer = document.getElementById('family-mother-education-container');
+            const fatherOccupationContainer = document.getElementById('family-father-occupation-container');
+            const motherOccupationContainer = document.getElementById('family-mother-occupation-container');
+
+            if (student.parentEducation && student.parentEducation.father) {
+                fatherEducationElem.textContent = student.parentEducation.father;
+                fatherEducationContainer.classList.remove('hidden');
+            } else {
+                fatherEducationContainer.classList.add('hidden');
+            }
+
+            if (student.parentEducation && student.parentEducation.mother) {
+                motherEducationElem.textContent = student.parentEducation.mother;
+                motherEducationContainer.classList.remove('hidden');
+            } else {
+                motherEducationContainer.classList.add('hidden');
+            }
+
+            if (student.fatherOccupation && student.fatherOccupation !== 'N/A') {
+                fatherOccupationElem.textContent = student.fatherOccupation;
+                fatherOccupationContainer.classList.remove('hidden');
+            } else {
+                fatherOccupationContainer.classList.add('hidden');
+            }
+
+            if (student.motherOccupation && student.motherOccupation !== 'N/A') {
+                motherOccupationElem.textContent = student.motherOccupation;
+                motherOccupationContainer.classList.remove('hidden');
+            } else {
+                motherOccupationContainer.classList.add('hidden');
+            }
+
+            document.getElementById('family-income-tax-payer').textContent = student.incomeTaxPayer || 'N/A';
+            document.getElementById('family-bpl-card').textContent = student.bplCard || 'N/A';
+
+            // Populate Academic Details
+            document.getElementById('academic-subject').textContent = student.subject || 'N/A';
+            document.getElementById('academic-previous-school').textContent = student.previousSchool || 'N/A';
+
+            // Populate Bank Details
+            document.getElementById('bank-account-no').textContent = student.accountNo || 'N/A';
+            document.getElementById('bank-ifsc-code').textContent = student.ifscCode || 'N/A';
+        }
+
+        // Event listener for the back button
+        backButton.addEventListener('click', displayStudentList);
+
+        // Event listener for the search input
+        studentSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            currentStudentList = studentData.filter(student =>
+                student.name.toLowerCase().includes(searchTerm)
+            );
+            displayStudentList(); // Re-render the list based on search
+        });
+
+        // Initial display of the student list when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            displayStudentList();
+        });
+    </script>
+</body>
+</html>
